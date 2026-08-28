@@ -1,0 +1,196 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Static design tokens (context/ui-context.md). These don't change between
+ * light and dark, so they're declared directly here rather than indirected
+ * through :root/.dark. Tailwind generates utility classes (bg, text, border)
+ * from any --color- prefixed name declared in @theme.
+ */
+@theme {
+  /* Brand */
+  --color-brand-50: #f8f5ff;
+  --color-brand-100: #eee7ff;
+  --color-brand-200: #ddd2ff;
+  --color-brand-300: #c2aeff;
+  --color-brand-400: #a07cff;
+  --color-brand-500: #7c4dff;
+  --color-brand-600: #673de6;
+  --color-brand-700: #542cc2;
+  --color-brand-800: #43239a;
+  --color-brand-900: #31176f;
+
+  /* Curiosity accent */
+  --color-curiosity-100: #fff6db;
+  --color-curiosity-300: #ffe08a;
+  --color-curiosity-500: #f4b400;
+  --color-curiosity-600: #d99500;
+  --color-curiosity-700: #b37400;
+
+  /* Success / Warning / Error / Info */
+  --color-success-100: #eafbf1;
+  --color-success-500: #22c55e;
+  --color-success-700: #15803d;
+  --color-warning-100: #fff7e6;
+  --color-warning-500: #f59e0b;
+  --color-warning-700: #b45309;
+  --color-error-100: #feecec;
+  --color-error-500: #ef4444;
+  --color-error-700: #b91c1c;
+  --color-info-100: #e8f4ff;
+  --color-info-500: #3b82f6;
+  --color-info-700: #1d4ed8;
+
+  /* Neutral */
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f4f4f5;
+  --color-neutral-200: #e4e4e7;
+  --color-neutral-300: #d4d4d8;
+  --color-neutral-400: #a1a1aa;
+  --color-neutral-500: #71717a;
+  --color-neutral-600: #52525b;
+  --color-neutral-700: #3f3f46;
+  --color-neutral-800: #27272a;
+  --color-neutral-900: #18181b;
+
+  /* Typography scale (context/ui-context.md "Font Scale") */
+  --text-display: 3.75rem;
+  --text-h1: 3rem;
+  --text-h2: 2.25rem;
+  --text-h3: 1.875rem;
+  --text-h4: 1.5rem;
+  --text-h5: 1.25rem;
+  --text-body-lg: 1.125rem;
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-caption: 0.75rem;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+
+  /* Theme-dependent semantic tokens (context/ui-context.md "Semantic Tokens") —
+     values differ between :root and .dark below. Text-secondary and
+     border-strong are intentionally not exposed as utilities here: nothing
+     consumes them yet, and "text-secondary" would collide awkwardly with
+     Tailwind's text-* utility prefix (ai-workflow-rules.md Rule 10 — no
+     token until a concrete use case needs it). */
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-hover: var(--surface-hover);
+  --color-discovery: var(--discovery);
+  --color-aha: var(--aha);
+
+  /* shadcn bridge — resolves through the semantic tokens below */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* Semantic tokens — light theme */
+  --surface: var(--color-neutral-50);
+  --surface-elevated: var(--color-neutral-100);
+  --surface-hover: var(--color-brand-100);
+  --primary-hover: var(--color-brand-600);
+  --primary-active: var(--color-brand-700);
+  --text-primary: var(--color-neutral-800);
+  --text-secondary: var(--color-neutral-600);
+  --text-muted: var(--color-neutral-500);
+  --border-strong: var(--color-neutral-300);
+  --discovery: var(--color-curiosity-500);
+  --aha: var(--color-curiosity-500);
+  --focus-ring: var(--color-brand-400);
+
+  /* shadcn bridge — resolves through the semantic tokens above */
+  --background: var(--color-neutral-0);
+  --foreground: var(--text-primary);
+  --card: var(--background);
+  --card-foreground: var(--foreground);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  --primary: var(--color-brand-500);
+  --primary-foreground: var(--color-neutral-0);
+  --secondary: var(--surface-elevated);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--surface-elevated);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--surface-hover);
+  --accent-foreground: var(--primary-active);
+  --destructive: var(--color-error-500);
+  --border: var(--color-neutral-200);
+  --input: var(--border);
+  --ring: var(--focus-ring);
+
+  /* Default component radius (context/ui-context.md "Border Radius") */
+  --radius: 0.75rem;
+}
+
+/*
+ * Dark theme is not specified in context/ui-context.md (light-only doc).
+ * These are a derived inversion of the same brand/neutral scales, shifting
+ * saturated accents to lighter tints for legibility on dark backgrounds.
+ * See context/specs/02-design-system.md "Design > Theme tokens" for the
+ * rationale — revisit if a real dark palette is ever specified.
+ */
+.dark {
+  --surface: var(--color-neutral-800);
+  --surface-elevated: var(--color-neutral-700);
+  --surface-hover: var(--color-brand-800);
+  --primary-hover: var(--color-brand-300);
+  --primary-active: var(--color-brand-500);
+  --text-primary: var(--color-neutral-50);
+  --text-secondary: var(--color-neutral-300);
+  --text-muted: var(--color-neutral-400);
+  --border-strong: var(--color-neutral-700);
+  --discovery: var(--color-curiosity-300);
+  --aha: var(--color-curiosity-300);
+  --focus-ring: var(--color-brand-300);
+
+  --background: var(--color-neutral-900);
+  --primary: var(--color-brand-400);
+  --primary-foreground: var(--color-neutral-900);
+  --border: var(--color-neutral-700);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    line-height: 1.6;
+  }
+  html {
+    @apply font-sans;
+  }
+}

@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# Next.js
+apps/web/.next/
+apps/web/out/
+
+# NestJS
+services/api/dist/
+
+# Prisma
+services/api/generated/
+
+# Uploaded files (local disk storage — see context/project-tracker.md)
+services/api/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes (bind-mounted data, if any)
+.docker/
+
+# Context
+context/

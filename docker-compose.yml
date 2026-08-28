@@ -1,0 +1,20 @@
+services:
+  # Postgres is not run via Docker on this project — a native local Postgres
+  # install is used instead, with a dedicated `rabbithole_app` role/database.
+  # See context/project-tracker.md for how it was set up.
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis_data:

@@ -1,0 +1,148 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  journeys      Journey[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+enum JourneyStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum JourneyDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+model Journey {
+  id                     String            @id @default(cuid())
+  title                  String
+  slug                   String            @unique
+  description            String
+  difficulty             JourneyDifficulty
+  status                 JourneyStatus     @default(DRAFT)
+  isFeatured             Boolean           @default(false)
+  publishedAt            DateTime?
+  createdById            String?
+  createdBy              User?             @relation(fields: [createdById], references: [id])
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+  nodes                  JourneyNode[]
+  discoveryLinksAsTarget DiscoveryLink[]
+  searchVector           Unsupported("tsvector")?
+
+  @@map("journey")
+}
+
+model JourneyNode {
+  id             String          @id @default(cuid())
+  journeyId      String
+  journey        Journey         @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+  title          String
+  content        String
+  order          Int
+  imageUrl       String?
+  imageKey       String?
+  sources        Source[]
+  discoveryLinks DiscoveryLink[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@unique([journeyId, order])
+  @@map("journey_node")
+}
+
+model Source {
+  id        String      @id @default(cuid())
+  nodeId    String
+  node      JourneyNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  label     String
+  url       String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@map("source")
+}
+
+model DiscoveryLink {
+  id              String      @id @default(cuid())
+  nodeId          String
+  node            JourneyNode @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  targetJourneyId String
+  targetJourney   Journey     @relation(fields: [targetJourneyId], references: [id], onDelete: Cascade)
+  label           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@map("discovery_link")
+}
