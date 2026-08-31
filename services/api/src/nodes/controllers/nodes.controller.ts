@@ -6,8 +6,10 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import type { JourneyNode } from '@prisma/client';
+import { AdminGuard } from '../../auth/guards/admin.guard';
 import { ZodValidationPipe } from '../../shared/zod-validation.pipe';
 import { createNodeSchema, type CreateNodeDto } from '../dto/create-node.dto';
 import {
@@ -17,6 +19,7 @@ import {
 import { updateNodeSchema, type UpdateNodeDto } from '../dto/update-node.dto';
 import { NodesService } from '../services/nodes.service';
 
+@UseGuards(AdminGuard)
 @Controller('journeys/:journeyId/nodes')
 export class NodesController {
   constructor(private readonly nodesService: NodesService) {}

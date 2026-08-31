@@ -5,15 +5,18 @@ import {
   Param,
   ParseFilePipe,
   Post,
+  UseGuards,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { JourneyNode } from '@prisma/client';
+import { AdminGuard } from '../../auth/guards/admin.guard';
 import { NodesService } from '../services/nodes.service';
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
+@UseGuards(AdminGuard)
 @Controller('nodes/:nodeId/image')
 export class NodeImageController {
   constructor(private readonly nodesService: NodesService) {}

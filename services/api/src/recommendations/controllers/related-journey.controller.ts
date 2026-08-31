@@ -21,7 +21,9 @@ export class RelatedJourneyController {
   // the frontend would throw on that empty body. Wrapping in
   // `{ related: ... }` is never falsy, so it always serializes as real JSON.
   @Get()
-  async findRelated(@Param('slug') slug: string): Promise<RelatedJourneyResponse> {
+  async findRelated(
+    @Param('slug') slug: string,
+  ): Promise<RelatedJourneyResponse> {
     const related = await this.recommendationsService.findRelatedJourney(slug);
     return { related };
   }

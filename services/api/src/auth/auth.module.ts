@@ -6,6 +6,7 @@ import { PrismaService } from '../shared/prisma.service';
 import { AUTH_INSTANCE } from './auth.constants';
 import { AuthController } from './auth.controller';
 import { createAuth } from './auth.instance';
+import { AdminGuard } from './guards/admin.guard';
 
 @Module({
   imports: [PrismaModule],
@@ -19,8 +20,17 @@ import { createAuth } from './auth.instance';
           prisma,
           config.get('BETTER_AUTH_SECRET', { infer: true }),
           config.get('BETTER_AUTH_URL', { infer: true }),
+          config.get('ADMIN_EMAILS', { infer: true }),
+          config.get('WEB_APP_ORIGIN', { infer: true }),
         ),
     },
+    AdminGuard,
   ],
+  // AUTH_INSTANCE must be exported alongside AdminGuard, not just AdminGuard
+  // itself: @UseGuards(AdminGuard) resolves the guard's own constructor
+  // dependencies (AUTH_INSTANCE) from the *consuming* module's DI context,
+  // not AuthModule's — confirmed by hitting the real
+  // UnknownDependenciesException this omission produces at boot.
+  exports: [AdminGuard, AUTH_INSTANCE],
 })
 export class AuthModule {}

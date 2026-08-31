@@ -1,3 +1,4 @@
+import { AuthNav } from "@/modules/auth/components/auth-nav";
 import { SearchInput } from "@/modules/search/components/search-input";
 
 export function Navbar() {
@@ -7,7 +8,10 @@ export function Navbar() {
         <span className="font-heading text-h5 font-bold text-primary">
           Rabbit Hole
         </span>
-        <SearchInput />
+        <div className="flex items-center gap-4">
+          <SearchInput />
+          <AuthNav />
+        </div>
       </div>
     </header>
   );
