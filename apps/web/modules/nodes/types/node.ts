@@ -3,6 +3,9 @@ export interface JourneyNode {
   journeyId: string;
   title: string;
   content: string;
+  // The reveal-on-demand payoff line ("the penny that drops") — optional;
+  // a node with none set simply skips the reveal prompt on the reading page.
+  ahaMoment: string | null;
   order: number;
   imageUrl: string | null;
   imageKey: string | null;
@@ -13,6 +16,7 @@ export interface JourneyNode {
 export interface CreateNodeInput {
   title: string;
   content: string;
+  ahaMoment?: string | null;
 }
 
 export type UpdateNodeInput = Partial<CreateNodeInput>;

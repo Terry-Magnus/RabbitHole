@@ -6,8 +6,10 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import type { Source } from '@prisma/client';
+import { AdminGuard } from '../../auth/guards/admin.guard';
 import { ZodValidationPipe } from '../../shared/zod-validation.pipe';
 import {
   createSourceSchema,
@@ -19,6 +21,7 @@ import {
 } from '../dto/update-source.dto';
 import { NodesService } from '../services/nodes.service';
 
+@UseGuards(AdminGuard)
 @Controller('nodes/:nodeId/sources')
 export class SourcesController {
   constructor(private readonly nodesService: NodesService) {}

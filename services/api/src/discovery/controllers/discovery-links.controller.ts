@@ -6,7 +6,9 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { AdminGuard } from '../../auth/guards/admin.guard';
 import { ZodValidationPipe } from '../../shared/zod-validation.pipe';
 import {
   createDiscoveryLinkSchema,
@@ -19,6 +21,7 @@ import {
 import type { DiscoveryLinkWithTarget } from '../repositories/discovery-links.repository';
 import { DiscoveryLinksService } from '../services/discovery-links.service';
 
+@UseGuards(AdminGuard)
 @Controller('nodes/:nodeId/discovery-links')
 export class DiscoveryLinksController {
   constructor(private readonly discoveryLinksService: DiscoveryLinksService) {}

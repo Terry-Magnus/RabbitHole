@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { DiscoveryLinkList } from "@/modules/discovery/components/discovery-link-list";
 import { useDiscoveryLinks } from "@/modules/discovery/hooks/use-discovery-links";
 import { JourneyDifficultyBadge } from "@/modules/journeys/components/journey-difficulty-badge";
@@ -30,6 +31,9 @@ import { useNode } from "@/modules/nodes/hooks/use-node";
 const nodeFormSchema = z.object({
   title: z.string().min(1, "Title is required").max(200),
   content: z.string().min(1, "Content is required"),
+  // Empty string means "not set" here; converted to null on submit since
+  // the backend's ahaMoment is optional/nullable, not an empty string.
+  ahaMoment: z.string().max(500, "Keep it to one short line").optional(),
 });
 
 type NodeFormValues = z.infer<typeof nodeFormSchema>;
@@ -43,12 +47,12 @@ export default function EditNodePage() {
 
   const form = useForm<NodeFormValues>({
     resolver: zodResolver(nodeFormSchema),
-    defaultValues: { title: "", content: "" },
+    defaultValues: { title: "", content: "", ahaMoment: "" },
   });
 
   useEffect(() => {
     if (node) {
-      form.reset({ title: node.title, content: node.content });
+      form.reset({ title: node.title, content: node.content, ahaMoment: node.ahaMoment ?? "" });
     }
     // form is stable across renders (react-hook-form guarantees this), so it's
     // intentionally left out of the dependency array to avoid re-running on
@@ -57,7 +61,10 @@ export default function EditNodePage() {
   }, [node]);
 
   function handleSubmit(values: NodeFormValues) {
-    updateNode.mutate(values);
+    updateNode.mutate({
+      ...values,
+      ahaMoment: values.ahaMoment?.trim() ? values.ahaMoment.trim() : null,
+    });
   }
 
   if (isLoading || !node) {
@@ -98,6 +105,23 @@ export default function EditNodePage() {
                 <FormLabel>Content</FormLabel>
                 <FormControl>
                   <NodeEditor content={field.value} onChange={field.onChange} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="ahaMoment"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>The penny that drops (optional)</FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    placeholder="What does a reader suddenly see?"
+                    rows={2}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

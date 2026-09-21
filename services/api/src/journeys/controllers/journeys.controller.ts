@@ -1,5 +1,14 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import type { Journey } from '@prisma/client';
+import { AdminGuard } from '../../auth/guards/admin.guard';
 import { ZodValidationPipe } from '../../shared/zod-validation.pipe';
 import {
   createJourneySchema,
@@ -11,6 +20,7 @@ import {
 } from '../dto/update-journey.dto';
 import { JourneysService } from '../services/journeys.service';
 
+@UseGuards(AdminGuard)
 @Controller('journeys')
 export class JourneysController {
   constructor(private readonly journeysService: JourneysService) {}

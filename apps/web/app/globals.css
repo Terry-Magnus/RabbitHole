@@ -3,88 +3,118 @@
 @import "shadcn/tailwind.css";
 @plugin "@tailwindcss/typography";
 
-@custom-variant dark (&:is(.dark *));
+/* `hover-fine:` — the exact gate the `animate` skill's Hard Rule 4 asks
+   for ((hover: hover) and (pointer: fine)), not Tailwind's built-in
+   `pointer-fine:` (which only checks any-pointer, not primary input, and
+   doesn't check hover capability at all). Use for any hover-triggered
+   transform/shadow so a tap on a touch device doesn't leave it "stuck". */
+@custom-variant hover-fine (@media (hover: hover) and (pointer: fine));
 
 /*
- * Static design tokens (context/ui-context.md). These don't change between
- * light and dark, so they're declared directly here rather than indirected
- * through :root/.dark. Tailwind generates utility classes (bg, text, border)
- * from any --color- prefixed name declared in @theme.
+ * Rabbit Hole is dark-only (context/ui-context.md "Design Philosophy":
+ * "The interface is dark, quiet, and out of the way"). There is no light
+ * theme and no .dark variant to toggle — "night" is the only mode, so
+ * every token below is declared once, directly, with no :root/.dark split.
  */
 @theme {
-  /* Brand */
-  --color-brand-50: #f8f5ff;
-  --color-brand-100: #eee7ff;
-  --color-brand-200: #ddd2ff;
-  --color-brand-300: #c2aeff;
-  --color-brand-400: #a07cff;
-  --color-brand-500: #7c4dff;
-  --color-brand-600: #673de6;
-  --color-brand-700: #542cc2;
-  --color-brand-800: #43239a;
-  --color-brand-900: #31176f;
+  /* Night (ground) */
+  --color-night-900: #0b0620;
+  --color-night-800: #0e0722;
+  --color-night-700: #120a2a;
+  --color-night-600: #150b32;
+  --color-night-500: #1b0f3f;
+  --color-night-400: #31176f;
 
-  /* Curiosity accent */
-  --color-curiosity-100: #fff6db;
-  --color-curiosity-300: #ffe08a;
-  --color-curiosity-500: #f4b400;
-  --color-curiosity-600: #d99500;
-  --color-curiosity-700: #b37400;
+  /* Violet (forward motion) */
+  --color-violet-700: #43239a;
+  --color-violet-600: #673de6;
+  --color-violet-500: #7c4dff;
+  --color-violet-400: #a07cff;
+  --color-violet-300: #c2aeff;
+  --color-violet-200: #b9acd9;
+  --color-violet-100: #dfd8f2;
 
-  /* Success / Warning / Error / Info */
-  --color-success-100: #eafbf1;
-  --color-success-500: #22c55e;
-  --color-success-700: #15803d;
-  --color-warning-100: #fff7e6;
-  --color-warning-500: #f59e0b;
-  --color-warning-700: #b45309;
-  --color-error-100: #feecec;
-  --color-error-500: #ef4444;
-  --color-error-700: #b91c1c;
-  --color-info-100: #e8f4ff;
-  --color-info-500: #3b82f6;
-  --color-info-700: #1d4ed8;
+  /* Lantern gold (revelation — earned, never decorative) */
+  --color-gold-700: #b37400;
+  --color-gold-500: #f4b400;
+  --color-gold-300: #ffe08a;
 
-  /* Neutral */
-  --color-neutral-0: #ffffff;
-  --color-neutral-50: #fafafa;
-  --color-neutral-100: #f4f4f5;
-  --color-neutral-200: #e4e4e7;
-  --color-neutral-300: #d4d4d8;
-  --color-neutral-400: #a1a1aa;
-  --color-neutral-500: #71717a;
-  --color-neutral-600: #52525b;
-  --color-neutral-700: #3f3f46;
-  --color-neutral-800: #27272a;
-  --color-neutral-900: #18181b;
+  /* Text roles that don't already fall on the violet/gold/night scale.
+     Named to never collide with the font-size scale below (Tailwind's
+     bare --text-* namespace is reserved for sizes, so these are
+     --color-*-prefixed instead — see the Font Scale note further down). */
+  --color-parchment: #f4f1ff;
+  --color-ink-muted: #9b8bc8;
+  --color-ink-ahead: #7c6ba8;
 
-  /* Typography scale (context/ui-context.md "Font Scale") */
+  /* Status — workshop (admin) only; never appears in the reader */
+  --color-ready: #4ade80;
+  --color-ready-2: #6ee7a0;
+  --color-attn: #ffb4b4;
+
+  /* Font Scale (context/ui-context.md) — desktop sizes. Instrument Serif
+     for titles/trail-names/stat-numbers only, never UI labels, never
+     below 20px. Mobile sizes are a media-query override on these same
+     variables (below, outside @theme) — every `text-hero` etc. usage steps
+     down automatically since Tailwind's generated utility references the
+     variable, not an inlined value. */
+  --text-hero: 5.25rem; /* 84px */
+  --text-summit-title: 4.25rem; /* 68px */
+  --text-wonder-title: 3.25rem; /* 52px */
+  --text-section-head: 2.125rem; /* 34px */
+  --text-trail-name: 2.375rem; /* 38px */
+  --text-stat-number: 2.125rem; /* 34px */
+  --text-body-lg: 1.1875rem; /* 19px */
+  --text-body: 1rem; /* 16px */
+  --text-ui-label: 0.9375rem; /* 15px */
+  --text-small: 0.875rem; /* 14px */
+  --text-kicker: 0.6875rem; /* 11px */
+
+  /* Temporary bridge — the old pre-redesign type scale. The Admin Workshop
+     (everything under /admin/**) is explicitly deferred to Pass 2 and still
+     uses these class names throughout; without them, every text-h1..h5/
+     caption/display usage there would silently resolve to no size at all.
+     Remove once Pass 2 migrates the admin off this scale. */
   --text-display: 3.75rem;
   --text-h1: 3rem;
   --text-h2: 2.25rem;
   --text-h3: 1.875rem;
   --text-h4: 1.5rem;
   --text-h5: 1.25rem;
-  --text-body-lg: 1.125rem;
-  --text-body: 1rem;
-  --text-small: 0.875rem;
   --text-caption: 0.75rem;
+
+  /* Border Radius */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-3xl: 28px;
+  --radius-full: 999px;
+
+  /* Shadows — depth on night comes from glow/translucency, never a
+     grey drop shadow. */
+  --shadow-card: 0 30px 80px rgba(10, 4, 30, 0.6);
+  --shadow-panel: -30px 0 90px rgba(5, 2, 16, 0.8);
+  --shadow-sheet: 0 -24px 70px rgba(5, 2, 16, 0.7);
+  --shadow-primary: 0 10px 30px rgba(124, 77, 255, 0.45);
+  --shadow-gold: 0 16px 40px rgba(244, 180, 0, 0.18);
+  --shadow-lantern: 0 0 60px rgba(244, 180, 0, 0.6);
 }
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+  --font-serif: var(--font-instrument-serif);
 
-  /* Theme-dependent semantic tokens (context/ui-context.md "Semantic Tokens") —
-     values differ between :root and .dark below. Text-secondary and
-     border-strong are intentionally not exposed as utilities here: nothing
-     consumes them yet, and "text-secondary" would collide awkwardly with
-     Tailwind's text-* utility prefix (ai-workflow-rules.md Rule 10 — no
-     token until a concrete use case needs it). */
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
   --color-surface-hover: var(--surface-hover);
+  --color-border-strong: var(--border-strong);
+  --color-border-gold: var(--border-gold);
+  --color-scrim: var(--scrim);
   --color-discovery: var(--discovery);
   --color-aha: var(--aha);
 
@@ -107,79 +137,81 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
-  /* Semantic tokens — light theme */
-  --surface: var(--color-neutral-50);
-  --surface-elevated: var(--color-neutral-100);
-  --surface-hover: var(--color-brand-100);
-  --primary-hover: var(--color-brand-600);
-  --primary-active: var(--color-brand-700);
-  --text-primary: var(--color-neutral-800);
-  --text-secondary: var(--color-neutral-600);
-  --text-muted: var(--color-neutral-500);
-  --border-strong: var(--color-neutral-300);
-  --discovery: var(--color-curiosity-500);
-  --aha: var(--color-curiosity-500);
-  --focus-ring: var(--color-brand-400);
+  /* Semantic tokens (context/ui-context.md "Semantic Tokens") */
+  --surface: var(--color-night-800);
+  --surface-elevated: var(--color-night-500);
+  --surface-hover: rgba(194, 174, 255, 0.12); /* --surface-hover */
+  --primary-hover: var(--color-violet-600);
+  --primary-active: var(--color-violet-700);
+  --text-primary: #ffffff;
+  --text-secondary: #c6bae8;
+  --text-muted: var(--color-ink-muted);
+  --border-strong: rgba(194, 174, 255, 0.3);
+  --discovery: var(--color-gold-500);
+  --aha: var(--color-gold-500);
+  --focus-ring: var(--color-violet-300);
+
+  /* Alpha surfaces */
+  --card-glass: linear-gradient(
+    168deg,
+    rgba(255, 255, 255, 0.075),
+    rgba(49, 23, 111, 0.35)
+  );
+  --surface-quiet: rgba(255, 255, 255, 0.04);
+  --border: rgba(194, 174, 255, 0.18);
+  --border-gold: rgba(255, 224, 138, 0.45);
+  --gold-wash: rgba(244, 180, 0, 0.12);
+  --scrim: rgba(10, 4, 30, 0.6);
 
   /* shadcn bridge — resolves through the semantic tokens above */
-  --background: var(--color-neutral-0);
+  --background: var(--color-night-700);
   --foreground: var(--text-primary);
-  --card: var(--background);
-  --card-foreground: var(--foreground);
-  --popover: var(--background);
-  --popover-foreground: var(--foreground);
-  --primary: var(--color-brand-500);
-  --primary-foreground: var(--color-neutral-0);
-  --secondary: var(--surface-elevated);
-  --secondary-foreground: var(--text-primary);
-  --muted: var(--surface-elevated);
-  --muted-foreground: var(--text-muted);
+  --card: var(--color-night-500);
+  --card-foreground: var(--text-primary);
+  --popover: var(--color-night-500);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--color-violet-500);
+  --primary-foreground: #ffffff;
+  --secondary: var(--color-night-500);
+  --secondary-foreground: var(--color-parchment);
+  --muted: var(--color-night-600);
+  --muted-foreground: var(--text-secondary);
   --accent: var(--surface-hover);
-  --accent-foreground: var(--primary-active);
-  --destructive: var(--color-error-500);
-  --border: var(--color-neutral-200);
+  --accent-foreground: var(--color-parchment);
+  --destructive: var(--color-attn);
   --input: var(--border);
   --ring: var(--focus-ring);
 
-  /* Default component radius (context/ui-context.md "Border Radius") */
-  --radius: 0.75rem;
+  --radius: var(--radius-lg);
+
+  /* Easing. --ease-responsive is context/ui-context.md's own literal spec
+     ("Responsive motion: 200–520ms on cubic-bezier(0.2, 0.7, 0.3, 1)") —
+     the one curve this design system actually names, used for every
+     hover-lift/press/reveal. It was being inlined as a raw bezier
+     repeatedly across components instead of tokenized; fixed here.
+     --ease-drawer is the `animate` skill's iOS-like drawer curve, for the
+     Rope's bottom-sheet-on-mobile / side-panel-on-desktop transition —
+     a distinct purpose, not a competing generic default. */
+  --ease-responsive: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/*
- * Dark theme is not specified in context/ui-context.md (light-only doc).
- * These are a derived inversion of the same brand/neutral scales, shifting
- * saturated accents to lighter tints for legibility on dark backgrounds.
- * See context/specs/02-design-system.md "Design > Theme tokens" for the
- * rationale — revisit if a real dark palette is ever specified.
- */
-.dark {
-  --surface: var(--color-neutral-800);
-  --surface-elevated: var(--color-neutral-700);
-  --surface-hover: var(--color-brand-800);
-  --primary-hover: var(--color-brand-300);
-  --primary-active: var(--color-brand-500);
-  --text-primary: var(--color-neutral-50);
-  --text-secondary: var(--color-neutral-300);
-  --text-muted: var(--color-neutral-400);
-  --border-strong: var(--color-neutral-700);
-  --discovery: var(--color-curiosity-300);
-  --aha: var(--color-curiosity-300);
-  --focus-ring: var(--color-brand-300);
-
-  --background: var(--color-neutral-900);
-  --primary: var(--color-brand-400);
-  --primary-foreground: var(--color-neutral-900);
-  --border: var(--color-neutral-700);
+/* Mobile Font Scale (context/ui-context.md "Responsive" — ≤599px). Same
+   variables as @theme above, so every text-hero/summit-title/etc. usage
+   steps down automatically; no per-component overrides needed. */
+@media (max-width: 639px) {
+  :root {
+    --text-hero: 2.875rem; /* 46px */
+    --text-summit-title: 2.625rem; /* 42px */
+    --text-wonder-title: 2.25rem; /* 36px */
+    --text-section-head: 1.6875rem; /* 27px */
+    --text-trail-name: 1.875rem; /* 30px */
+    --text-stat-number: 1.5rem; /* 24px */
+    --text-body-lg: 1rem; /* 16px, matches ui-context's mobile "Large body" */
+  }
 }
 
 @layer base {
@@ -188,9 +220,129 @@
   }
   body {
     @apply bg-background text-foreground;
-    line-height: 1.6;
+    line-height: 1.68; /* reader; workshop overrides to 1.6 per-component */
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* Motion (context/ui-context.md "Motion Principles") — ambient decoration
+   stays 4–44s, responsive feedback stays 200–520ms on the same easing
+   curve. Every animation here collapses under prefers-reduced-motion. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes rope-in {
+  from {
+    opacity: 0;
+    transform: translateX(46px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -220% 0;
+  }
+  100% {
+    background-position: 220% 0;
+  }
+}
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(244, 180, 0, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(244, 180, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(244, 180, 0, 0);
+  }
+}
+@keyframes lantern {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, -4%, 0) scale(1.12);
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translateY(-26px);
+    opacity: 0.75;
+  }
+}
+
+.animate-rise {
+  animation: rise 520ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.animate-pop {
+  animation: pop 380ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.animate-rope-in {
+  animation: rope-in 280ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.animate-shimmer {
+  animation: shimmer 3.4s linear infinite;
+}
+.animate-glow {
+  animation: glow 2.4s ease-out infinite;
+}
+.animate-lantern {
+  animation: lantern 4.5s ease-in-out infinite;
+}
+.animate-drift {
+  animation: drift 30s ease-in-out infinite;
+}
+.animate-float {
+  animation: float 11s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-pop,
+  .animate-rope-in,
+  .animate-shimmer,
+  .animate-glow,
+  .animate-lantern,
+  .animate-drift,
+  .animate-float {
+    animation: none !important;
   }
 }

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AuthModule } from '../auth/auth.module';
 import { JourneysModule } from '../journeys/journeys.module';
 import { UploadsModule } from '../uploads/uploads.module';
 import { NodeImageController } from './controllers/node-image.controller';
@@ -9,7 +10,7 @@ import { NodesRepository } from './repositories/nodes.repository';
 import { NodesService } from './services/nodes.service';
 
 @Module({
-  imports: [JourneysModule, UploadsModule],
+  imports: [AuthModule, JourneysModule, UploadsModule],
   controllers: [
     NodesController,
     SourcesController,

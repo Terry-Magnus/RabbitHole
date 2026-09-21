@@ -75,7 +75,10 @@ export class RecommendationsService {
     // directly against the real database during verification, not assumed.
     // Descriptions are free prose actually describing the topic, so they're
     // the more discriminative signal for similarity.
-    const descriptionQuery = source.description.trim().split(/\s+/).join(' OR ');
+    const descriptionQuery = source.description
+      .trim()
+      .split(/\s+/)
+      .join(' OR ');
     const similar =
       await this.recommendationsRepository.findMostSimilarPublished(
         descriptionQuery,

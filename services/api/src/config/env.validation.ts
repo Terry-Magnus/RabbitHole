@@ -8,6 +8,10 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(4000),
   WEB_APP_ORIGIN: z.string().url().default('http://localhost:3000'),
   UPLOADS_DIR: z.string().min(1).default('uploads'),
+  // Comma-separated. An email in this list becomes ADMIN at registration
+  // time (see auth/auth.instance.ts's databaseHooks); everyone else
+  // registers as a plain USER. See context/specs/12-authentication.md.
+  ADMIN_EMAILS: z.string().default(''),
 });
 
 export type Env = z.infer<typeof envSchema>;

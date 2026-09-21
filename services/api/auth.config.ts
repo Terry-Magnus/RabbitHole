@@ -10,4 +10,6 @@ export const auth = createAuth(
   prisma,
   process.env.BETTER_AUTH_SECRET ?? '',
   process.env.BETTER_AUTH_URL ?? 'http://localhost:4000',
+  process.env.ADMIN_EMAILS ?? '',
+  process.env.WEB_APP_ORIGIN ?? 'http://localhost:3000',
 );

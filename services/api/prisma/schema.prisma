@@ -8,17 +8,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model User {
   id            String    @id
   name          String
   email         String
   emailVerified Boolean   @default(false)
   image         String?
+  role          UserRole  @default(USER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
   journeys      Journey[]
+  progress      JourneyProgress[]
+  bookmarks     Bookmark[]
 
   @@unique([email])
   @@map("user")
@@ -99,6 +107,8 @@ model Journey {
   updatedAt              DateTime          @updatedAt
   nodes                  JourneyNode[]
   discoveryLinksAsTarget DiscoveryLink[]
+  progress               JourneyProgress[]
+  bookmarks              Bookmark[]
   searchVector           Unsupported("tsvector")?
 
   @@map("journey")
@@ -110,6 +120,10 @@ model JourneyNode {
   journey        Journey         @relation(fields: [journeyId], references: [id], onDelete: Cascade)
   title          String
   content        String
+  // The reveal-on-demand payoff line (design: "the penny that drops",
+  // shown behind a "strike the match" interaction) — optional; a node
+  // with none set simply skips the reveal prompt entirely.
+  ahaMoment      String?
   order          Int
   imageUrl       String?
   imageKey       String?
@@ -145,4 +159,31 @@ model DiscoveryLink {
   updatedAt       DateTime    @updatedAt
 
   @@map("discovery_link")
+}
+
+model JourneyProgress {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  journeyId        String
+  journey          Journey   @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+  lastNodePosition Int
+  completedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([userId, journeyId])
+  @@map("journey_progress")
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  journeyId String
+  journey   Journey  @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, journeyId])
+  @@map("bookmark")
 }
