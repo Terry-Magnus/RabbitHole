@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "../lib/auth-client";
+import { getPostAuthRedirect } from "../lib/get-post-auth-redirect";
 
 const registerFormSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
@@ -41,14 +42,14 @@ export function RegisterForm() {
   async function handleSubmit(values: RegisterFormValues) {
     setIsSubmitting(true);
     const { error } = await authClient.signUp.email(values);
-    setIsSubmitting(false);
 
     if (error) {
+      setIsSubmitting(false);
       toast.error(error.message ?? "Registration failed");
       return;
     }
 
-    router.push("/admin");
+    router.push(await getPostAuthRedirect());
   }
 
   return (

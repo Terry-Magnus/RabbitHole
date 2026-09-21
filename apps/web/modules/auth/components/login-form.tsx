@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "../lib/auth-client";
+import { getPostAuthRedirect } from "../lib/get-post-auth-redirect";
 
 const loginFormSchema = z.object({
   email: z.string().min(1, "Email is required").email("Enter a valid email"),
@@ -38,14 +39,14 @@ export function LoginForm() {
   async function handleSubmit(values: LoginFormValues) {
     setIsSubmitting(true);
     const { error } = await authClient.signIn.email(values);
-    setIsSubmitting(false);
 
     if (error) {
+      setIsSubmitting(false);
       toast.error(error.message ?? "Sign in failed");
       return;
     }
 
-    router.push("/admin");
+    router.push(await getPostAuthRedirect());
   }
 
   return (

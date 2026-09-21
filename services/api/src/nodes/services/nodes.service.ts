@@ -71,6 +71,7 @@ export class NodesService {
     return this.nodesRepository.create({
       title: dto.title,
       content: this.sanitize(dto.content),
+      ahaMoment: dto.ahaMoment,
       order: maxOrder === null ? 0 : maxOrder + 1,
       journey: { connect: { id: journeyId } },
     });
@@ -86,6 +87,7 @@ export class NodesService {
     return this.nodesRepository.update(id, {
       title: dto.title,
       content: dto.content ? this.sanitize(dto.content) : undefined,
+      ahaMoment: dto.ahaMoment,
     });
   }
 

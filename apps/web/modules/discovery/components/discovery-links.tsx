@@ -20,28 +20,33 @@ export function DiscoveryLinks({ links, currentLocation }: DiscoveryLinksProps) 
   }
 
   return (
-    <div className="space-y-2 border-t border-border pt-6">
-      <p className="text-small font-medium text-muted-foreground">Keep exploring</p>
-      <ul className="space-y-2">
+    <div className="flex flex-col gap-4.5 pt-6">
+      <div className="flex items-center gap-3">
+        <span className="size-2 animate-glow rounded-full bg-gold-500" />
+        <span className="font-mono text-kicker tracking-[0.16em] text-gold-300 uppercase">
+          Paths off the trail — the rope holds your place
+        </span>
+      </div>
+      <div className="grid gap-3.5 sm:grid-cols-2">
         {links.map((link) => (
-          <li key={link.id}>
-            <Link
-              href={`/journeys/${link.journey.slug}`}
-              onClick={() => addStop(currentLocation)}
-              className="block rounded-md border border-border px-4 py-3 transition-shadow duration-200 hover:shadow-[0_0_0_1px_var(--color-discovery),0_0_16px_-4px_var(--color-discovery)]"
-            >
-              <p className="text-body font-medium text-foreground">
-                {link.label ?? link.journey.title}
-              </p>
-              <p className="text-caption text-muted-foreground">
-                {link.label
-                  ? `${link.journey.title} · ${difficultyLabels[link.journey.difficulty]}`
-                  : difficultyLabels[link.journey.difficulty]}
-              </p>
-            </Link>
-          </li>
+          <Link
+            key={link.id}
+            href={`/journeys/${link.journey.slug}`}
+            onClick={() => addStop(currentLocation)}
+            className="flex flex-col gap-2.5 rounded-xl border border-gold-300/28 bg-white/4.5 p-5.5 transition-[transform,border-color,box-shadow] duration-220 ease-(--ease-responsive) hover-fine:hover:-translate-y-1 hover:border-gold-300/75 hover:shadow-gold"
+          >
+            <span className="font-serif text-2xl leading-[1.15] text-white">
+              {link.label ?? link.journey.title}
+            </span>
+            {link.label ? (
+              <span className="text-small text-violet-200">{link.journey.title}</span>
+            ) : null}
+            <span className="font-mono text-kicker tracking-widest text-gold-300 uppercase">
+              {difficultyLabels[link.journey.difficulty]}
+            </span>
+          </Link>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

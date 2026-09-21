@@ -5,6 +5,11 @@ import type { RopeStop } from "../types/rope";
 interface RopeState {
   stops: RopeStop[];
   addStop: (stop: Omit<RopeStop, "id">) => void;
+  // Not persisted (see partialize below) — purely so any component (the
+  // floating pill, the Summit's "See the rope" link) can open the same
+  // panel without prop-drilling a shared open/close handler between them.
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
 }
 
 // sessionStorage, not localStorage: the trail should survive an accidental
@@ -20,10 +25,15 @@ export const useRopeStore = create<RopeState>()(
         set((state) => ({
           stops: [...state.stops, { ...stop, id: crypto.randomUUID() }],
         })),
+      isOpen: false,
+      setOpen: (open) => set({ isOpen: open }),
     }),
     {
       name: "rabbit-hole-rope",
       storage: createJSONStorage(() => sessionStorage),
+      // isOpen is transient UI state, not part of the trail's memory —
+      // reopening a fresh tab should never come back with the panel open.
+      partialize: (state) => ({ stops: state.stops }),
     },
   ),
 );

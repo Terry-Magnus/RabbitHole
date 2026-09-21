@@ -6,10 +6,12 @@ import { validateEnv } from './config/env.validation';
 import { DiscoveryModule } from './discovery/discovery.module';
 import { JourneysModule } from './journeys/journeys.module';
 import { NodesModule } from './nodes/nodes.module';
+import { ProgressModule } from './progress/progress.module';
 import { RecommendationsModule } from './recommendations/recommendations.module';
 import { SearchModule } from './search/search.module';
 import { PrismaModule } from './shared/prisma.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { UploadsModule } from './uploads/uploads.module';
     DiscoveryModule,
     RecommendationsModule,
     SearchModule,
+    ProgressModule,
+    UsersModule,
   ],
   controllers: [AppController],
 })

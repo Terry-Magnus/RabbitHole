@@ -21,6 +21,7 @@ function makeNode(
     journeyId: 'journey-1',
     title: 'Intro',
     content: '<p>Hello</p>',
+    ahaMoment: null,
     order: 0,
     imageUrl: null,
     imageKey: null,

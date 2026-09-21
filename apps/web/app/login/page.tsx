@@ -13,15 +13,18 @@ import {
 } from "@/components/ui/card";
 import { LoginForm } from "@/modules/auth/components/login-form";
 import { authClient } from "@/modules/auth/lib/auth-client";
+import { getPostAuthRedirect } from "@/modules/auth/lib/get-post-auth-redirect";
 
 export default function LoginPage() {
   const router = useRouter();
   const { data: session } = authClient.useSession();
 
   useEffect(() => {
-    if (session) {
-      router.push("/admin");
+    if (!session) {
+      return;
     }
+
+    void getPostAuthRedirect().then((target) => router.push(target));
   }, [session, router]);
 
   return (

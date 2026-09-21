@@ -20,6 +20,7 @@ function makeNode(
     journeyId: 'journey-1',
     title: 'Intro',
     content: '<p>Hello</p>',
+    ahaMoment: null,
     order: 0,
     imageUrl: null,
     imageKey: null,
@@ -152,6 +153,73 @@ describe('NodesService', () => {
       });
 
       expect(node.content).toBe('<p>Hello</p>');
+    });
+
+    it('passes ahaMoment through to the repository', async () => {
+      const repository = makeRepository({
+        create: jest
+          .fn()
+          .mockImplementation((data: Partial<JourneyNode>) =>
+            Promise.resolve(makeNode(data)),
+          ),
+      });
+      const service = new NodesService(
+        repository,
+        makeJourneysService(),
+        makeUploadsService(),
+      );
+
+      const node = await service.create('journey-1', {
+        title: 'Intro',
+        content: '<p>Hi</p>',
+        ahaMoment: 'The penny that drops.',
+      });
+
+      expect(node.ahaMoment).toBe('The penny that drops.');
+    });
+  });
+
+  describe('update', () => {
+    it('passes a changed ahaMoment through to the repository', async () => {
+      const repository = makeRepository({
+        findById: jest.fn().mockResolvedValue(makeNode()),
+        update: jest
+          .fn()
+          .mockImplementation((_id, data) => Promise.resolve(makeNode(data))),
+      });
+      const service = new NodesService(
+        repository,
+        makeJourneysService(),
+        makeUploadsService(),
+      );
+
+      const node = await service.update('journey-1', 'node-1', {
+        ahaMoment: 'Updated payoff.',
+      });
+
+      expect(node.ahaMoment).toBe('Updated payoff.');
+    });
+
+    it('clears ahaMoment when explicitly set to null', async () => {
+      const repository = makeRepository({
+        findById: jest
+          .fn()
+          .mockResolvedValue(makeNode({ ahaMoment: 'Old payoff.' })),
+        update: jest
+          .fn()
+          .mockImplementation((_id, data) => Promise.resolve(makeNode(data))),
+      });
+      const service = new NodesService(
+        repository,
+        makeJourneysService(),
+        makeUploadsService(),
+      );
+
+      const node = await service.update('journey-1', 'node-1', {
+        ahaMoment: null,
+      });
+
+      expect(node.ahaMoment).toBeNull();
     });
   });
 

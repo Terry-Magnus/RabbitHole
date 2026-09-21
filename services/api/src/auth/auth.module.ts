@@ -7,6 +7,7 @@ import { AUTH_INSTANCE } from './auth.constants';
 import { AuthController } from './auth.controller';
 import { createAuth } from './auth.instance';
 import { AdminGuard } from './guards/admin.guard';
+import { SessionGuard } from './guards/session.guard';
 
 @Module({
   imports: [PrismaModule],
@@ -25,12 +26,13 @@ import { AdminGuard } from './guards/admin.guard';
         ),
     },
     AdminGuard,
+    SessionGuard,
   ],
-  // AUTH_INSTANCE must be exported alongside AdminGuard, not just AdminGuard
-  // itself: @UseGuards(AdminGuard) resolves the guard's own constructor
+  // AUTH_INSTANCE must be exported alongside the guards, not just the
+  // guards themselves: @UseGuards(...) resolves a guard's own constructor
   // dependencies (AUTH_INSTANCE) from the *consuming* module's DI context,
   // not AuthModule's — confirmed by hitting the real
   // UnknownDependenciesException this omission produces at boot.
-  exports: [AdminGuard, AUTH_INSTANCE],
+  exports: [AdminGuard, SessionGuard, AUTH_INSTANCE],
 })
 export class AuthModule {}
